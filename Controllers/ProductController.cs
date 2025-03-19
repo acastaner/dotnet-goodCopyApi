@@ -8,7 +8,7 @@ namespace GoodCopyApi.Controllers;
 [Route("api/[controller]")]
 public class ProductController : ControllerBase
 {
-    private static readonly Product[] Products = new Product[]
+    private static readonly List<Product> Products = new List<Product>
     {
         new Product { Id = 1, Name = "Product1", Price = 10.99, Stock = 50 },
             new Product { Id = 2, Name = "Product2", Price = 20.99, Stock = 30 },
@@ -34,13 +34,25 @@ public class ProductController : ControllerBase
     {
         return Products;
     }
-    [HttpGet("{id}")] // GET /api/2
-    public Product Get(int id)
+    [HttpGet("{id}")] // GET /api/product/2
+    public IActionResult GetProduct(int id)
     {
         Product product = GetProductById(id);
         // If product is null we create one on the fly
         product ??= new Product("RandomProduct", 29.12, 200);
-        return product;
+        return Ok(product);
+    }
+
+    [HttpPost] // POST /api/product
+    public IActionResult Post([FromBody] Product newProduct)
+    {
+        if (newProduct == null)
+        {
+            return BadRequest("Product object is null.");
+        }
+        newProduct.Id = Products.Count() + 1;
+        Products.Add(newProduct);
+        return CreatedAtAction(nameof(GetProduct), new { id = newProduct.Id }, newProduct);
     }
 
     private static Product GetProductById(int id)
