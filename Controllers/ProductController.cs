@@ -6,11 +6,11 @@ namespace GoodCopyApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductController : ControllerBase
+public class ProductController(ILogger<ProductController> logger) : ControllerBase
 {
-    private static readonly List<Product> Products = new List<Product>
-    {
-        new Product { Id = 1, Name = "Product1", Price = 10.99, Stock = 50 },
+    private static readonly List<Product> Products =
+    [
+            new Product { Id = 1, Name = "Product1", Price = 10.99, Stock = 50 },
             new Product { Id = 2, Name = "Product2", Price = 20.99, Stock = 30 },
             new Product { Id = 3, Name = "Product3", Price = 30.99, Stock = 20 },
             new Product { Id = 4, Name = "Product4", Price = 40.99, Stock = 10 },
@@ -20,14 +20,9 @@ public class ProductController : ControllerBase
             new Product { Id = 8, Name = "Product8", Price = 80.99, Stock = 0 },
             new Product { Id = 9, Name = "Product9", Price = 90.99, Stock = 0 },
             new Product { Id = 10, Name = "Product10", Price = 100.99, Stock = 0 }
-    };
+    ];
 
-    private readonly ILogger<ProductController> _logger;
-
-    public ProductController(ILogger<ProductController> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<ProductController> _logger = logger;
 
     [HttpGet] // GET /api/product
     public IEnumerable<Product> Get()

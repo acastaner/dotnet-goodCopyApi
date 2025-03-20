@@ -12,7 +12,9 @@ public class Product
     public int Stock { get; set; }
 
     public Product()
-    { }
+    {
+        Name = string.Empty;
+    }
 
     public Product(int id, string name, double price, int stock)
     {
