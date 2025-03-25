@@ -2,6 +2,7 @@ import requests
 import random
 import string
 import time
+import argparse
 
 # Base URL of the API
 BASE_URL = "https://goodcopy.forti-erebor.ovh/api/product"
@@ -55,8 +56,9 @@ def get_all_products():
     return response
 
 # Main function to make random API requests
-def make_random_requests():
+def make_random_requests(num_requests=10, continuous=False):
     created_product_ids = []
+    total_requests = 0
 
     try:
         while True:
@@ -70,7 +72,7 @@ def make_random_requests():
                 method = "POST"
                 url = BASE_URL
                 if response.status_code == 201:
-                    created_product_ids.append(response.json().get("id"))
+                    created_product_ids.append(response.json().get("id"))                    
 
             elif action == "get_all":
                 response = get_all_products()
@@ -99,11 +101,21 @@ def make_random_requests():
 
             if response is not None:
                 print(f"{method}: {url} | {response.status_code} {response.reason}")
-
+                total_requests += 1
+                print(f"Requests {total_requests}")
+            
             time.sleep(1)  # Wait for 1 second before the next request
+
+            if not continuous and total_requests >= num_requests:
+                break
 
     except KeyboardInterrupt:
         print("Requests stopped.")
 
 if __name__ == "__main__":
-    make_random_requests()
+    parser = argparse.ArgumentParser(description="Make random API requests.")
+    parser.add_argument("--requests", type=int, default=10, help="Number of requests to make.")
+    parser.add_argument("--continuous", action="store_true", help="Run requests continuously.")
+    args = parser.parse_args()
+
+    make_random_requests(num_requests=args.requests, continuous=args.continuous)
